@@ -1,0 +1,122 @@
+using FireSharp.Config;
+using FireSharp.Interfaces;
+using FireSharp.Response;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace pro_firebase
+{
+    class Counnt
+    {
+        IFirebaseConfig config = new FirebaseConfig
+        {
+            AuthSecret = "9xmTdsHYpFUhoF1pdnZfQyxJmtgM8cTQ84IYZliT",
+            BasePath = "https://mypro3-c56df-default-rtdb.firebaseio.com/",
+        };
+        IFirebaseClient client;
+
+        public async void Add_User()
+        {
+           // var vr = Application.OpenForms["Form1"].;
+            //txt_id.Text = new Function.Get_Mac().GetMACAddress().ToString();
+            //txt_name.Text = new Function.Get_Mac().User_Name().ToString();
+            var user = new User
+            {
+                Mac_Address = new Function.Get_Mac().GetMACAddress().ToString(),
+                Name = new Function.Get_Mac().User_Name().ToString(),
+                //check = false,
+
+            };
+
+            SetResponse response = await client.SetTaskAsync("Information/" + new Function.Get_Mac().GetMACAddress().ToString(), user);
+            User result = response.ResultAs<User>();
+
+            var cu = new Curser
+            {
+                curs1 = false,
+                curs2 = false,
+                curs3 = false,
+                curs4 = false,
+                curs5 = false,
+
+            };
+            SetResponse response2 = await client.SetTaskAsync("Information/" + new Function.Get_Mac().GetMACAddress().ToString() + "/" + "cours", cu);
+            Curser result2 = response2.ResultAs<Curser>();
+
+            MessageBox.Show("Data :  " + result.Mac_Address);
+        }
+
+
+
+        public async void chec_Mac()
+        {
+
+            string mac = new Function.Get_Mac().GetMACAddress().ToString();
+            FirebaseResponse response = await client.GetTaskAsync("Information/" + mac);
+            User dt = response.ResultAs<User>();
+
+            //  MessageBox.Show(dt.check.ToString());
+            if (dt.Mac_Address == mac)
+            {
+                FirebaseResponse response2 = await client.GetTaskAsync("Information/" + mac + "/" + "cours");
+                Curser dt2 = response2.ResultAs<Curser>();
+                MessageBox.Show(dt.Mac_Address);
+
+
+                if (dt2.curs1 == true)
+                {
+                    MessageBox.Show(" dt2.curs1 == true");
+                    new Form1().ShowDialog();
+
+                }
+                else
+                {
+                    new Form2().ShowDialog();
+                    MessageBox.Show(dt2.curs1.ToString());
+                }
+
+            }
+            else
+            {
+                MessageBox.Show(" NULL ");
+            }
+        }
+        public async void update()
+        {
+            string mac = new Function.Get_Mac().GetMACAddress().ToString();
+            FirebaseResponse response = await client.GetTaskAsync("Information/" + mac);
+            User dt = response.ResultAs<User>();
+
+            //  txt_id.Text = dt.Mac_Address;
+            //  MessageBox.Show(dt.check.ToString());
+            if (dt.Mac_Address == mac)
+            {
+                FirebaseResponse response2 = await client.GetTaskAsync("Information/" + mac + "/" + "cours");
+                Curser dt2 = response2.ResultAs<Curser>();
+                MessageBox.Show(dt.Mac_Address);
+
+
+                if (dt2.curs1 == true)
+                {
+                    MessageBox.Show(" dt2.curs1 == true");
+                    new Form1().ShowDialog();
+
+                }
+                else
+                {
+                    // new Form2().ShowDialog();
+                    MessageBox.Show(dt2.curs1.ToString());
+                }
+
+            }
+            else
+            {
+                MessageBox.Show(" NULL ");
+            }
+        }
+    }
+}
